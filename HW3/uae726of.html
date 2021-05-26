@@ -2,12 +2,257 @@
 <html>
 <head>
 <meta charset="ISO-8859-1">
-<title>Nick Marcotte HW3</title>
+<title>mysite</title>
+
+<style>
+
+.address{
+  line-height: .2;
+  position: relative;
+  top: 20px;
+  left: 100px;
+}
+
+.header{
+  text-align: center;
+  font-size: 75px;
+  color: #b8860b;
+}
+
+.navbar{
+  line-height: 2;
+  margin-top: 90px;
+  border-top: 1px solid #A8A8A8;
+  text-align: center;
+  display: flex;
+  justify-content:space-evenly; 
+}
+
+a{
+  text-decoration: none;
+  font-size: 20px;
+  color: Black;
+}
+
+.firstIMG{
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+  height: 400 px;
+}
+
+.container{
+  display: flex;
+}
+
+.firstCol{
+  position:relative;
+  margin-left: 60px;
+  margin-right: 40px;
+  width: 45%;  
+}
+
+.secondCol{
+  position:relative;
+  margin-left: 40px;
+  margin-right: 60px;
+  width: 45%;  
+}
+
+.aboutSection{
+  width: 60%;
+  margin-bottom: 100px;
+}
+
+#restaurant{
+  font-size: 20px;
+  margin-bottom: 30px;
+}
+
+.subheading{
+  line-height: .6;
+  color: #b8860b;
+  margin-bottom: 30px;
+  font-size: 42px;
+}
+
+.aboutSection2{
+  width: 80%;
+  margin-bottom: 100px;
+}
+
+.aboutSection2 a{
+  display: block;
+}
+.subheading2{
+  line-height: .6;
+  color: #b8860b;
+  font-size: 42px;
+}
+
+#description{
+  font-size: 23px;
+  line-height: 1.3;
+}
+B.readMoreLink{
+  font-size: 25px;
+}
+#description2{
+  font-size: 23px;
+  line-height: 1.3;
+  width: 75%;
+}
+
+#secondIMG{
+  margin-top: 125px;
+  margin-bottom: 50px;
+  width:100%;
+}
+
+#thirdIMG{
+  width:100%;
+  margin-bottom: 100px;
+}
+
+#fourthIMG{
+  width: 100%;
+  margin-bottom: 50px;
+}
+#fifthIMG{
+  width: 100%;
+}
+
+
+#overlayContainer{
+  margin-left: 60px;
+  margin-right:60px;
+  position: relative;
+}
+
+#centeredText{
+  position: absolute;
+  top: 47%;
+  width: 33.3%;
+  text-align: center;
+  font-size: 18px;
+  background-color: white;
+  color: gray;
+  left: 33.3%;
+}
+
+#sixthIMG{
+  width: 100%;
+}
+
+#horizontalText{
+  margin-top: 50px;
+  text-align: center;
+}
+
+.reviews{
+  font-size: 45px;
+  line-height: .7;
+  color: #b8860b;
+}
+
+#seventhIMG{
+  width: 100%;
+  margin-bottom: 200px;
+}
+
+#finalDiv{
+  background-color: #b8860b;
+  margin-top: 50px;
+}
+
+.copywrite{
+  color: white;
+  font-size: 15px;
+  position: relative;
+  width: 20%;
+  left: 70%;
+  top: -150px;
+}
+
+</style>
+
+
 </head>
+  
 <body>
 
+  <p class = "address">332 Keawe Street</p>  
+  <p class = "address"> Hilo, Hawaii 96720</p>
+  
+  <h1 class = "header">T H Y M E</h1>
+  <nav class = "navbar">
+    <a href="" target="_blank">Home</a>
+    <a href="" target="_blank">Our Vision</a>
+    <a href="" target="_blank">Menu</a>
+    <a href="" target="_blank">Order Online</a>
+    <a href="" target="_blank">Contact Us</a>
+  </nav>
+  
+  <img class = "firstIMG" src="http://csci571.com/hw/hw3/images/image6.jpg"></img>
+  
+  <br><br><br>
+  
+  <div class = "container">
+    
+    <div class = "firstCol">
+      <img id = "secondIMG" src="http://csci571.com/hw/hw3/images/image3.jpg">
+      <img id = "thirdIMG" src="http://csci571.com/hw/hw3/images/image2.jpg"></img>
+      <div class = "aboutSection2">
+        <h1 class = "subheading2">Freshest Island </h1>
+        <h1 class = "subheading2">Food From Local Vendors</h1>
+        
+        <p id = "description2"> Supporting local economy and the environment. Gluten-free items also available.         </p>
+        
+        <a href="" target="_blank"> <b class = "readMoreLink" >Read More Here></b></a>
+      </div>
 
+ 
+    </div>
+    
+    <div class = "secondCol">
+       
+      <div class = "aboutSection">
+        <p id = "restaurant">OUR RESTAURANT</p>
+        <h1 class = "subheading"> Local Fresh Cuisine </h1>
+        <h1 class = "subheading">For Everyone </h1>
+        <p id = "description">Pineapples is a family owned and operated restaurant, dedicated to providing island fresh cuisine
+        to the east side of the Big Island. Our restaurant is located in the historic Pineapple building, located
+        in the heart of downtown Hilo. </p>
+        <a href="" target="_blank"><b class = "readMoreLink">Read More Here></a>
+      </div>
+      
+      <img id = "fourthIMG" src="http://csci571.com/hw/hw3/images/image1.jpg"></img>
+      <img id = "fifthIMG" src="http://csci571.com/hw/hw3/images/image4.jpg"></img>
+     
+    </div>
+    
+  </div>
+ 
+<div id = "overlayContainer">
+  <img id = "sixthIMG" src="http://csci571.com/hw/hw3/images/image7.jpg"></img>
+  <div id = "centeredText">
+  <h5>GREENS JUST GOT FASTER!</h5>
+  <h1>Order Online</h1>
+  </div>
+</div>
 
+<div id = "horizontalText">
+  <h6>GoGreenMag.com</h6>
+  <h1 class = "reviews">"Loved it. We walked in around 6:30 without reservations"</h1>
+  <h1 class = "reviews">"and were seated."</h1>
+  <h1 class = "reviews">"The coconut crusted ono was on special and perfect"</h1>
+</div>
+
+<div id = "finalDiv">
+  <img id = "seventhIMG" src="http://csci571.com/hw/hw3/images/image5.jpg"></img>
+  <p class = "copywrite">©2017 by Pineapples Hilo Restaurant PinapplesHilo.com</p>
+</div>
 
 </body>
 </html>
