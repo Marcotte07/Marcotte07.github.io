@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>HW6</title>
+	
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    
+    
+    <script>
+    var lat = "";
+    var lng = "";
+    
+    var geoHash = "";
+    // This function gets city and country through ipinfo.io api
+    // It is ran when the client page loads
+    function getLocation(){
+    	$.ajax({
+            type: "GET",
+            url: "https://ipinfo.io/json?token=b8767809c41bba", //localhost Flask            
+            success: function( result ) {
+				var string = result.loc.split(",");
+            	lat = string[0];
+            	lng = string[1];
+			 }
+        });
+    	
+    	// my token is: b8767809c41bba
+    	document.getElementById("submit").disabled = false;
+    }
+    
+    // Get Latitude and Logitude
+    
+    // My api key is: AIzaSyBUVIzR6tIwztkSldSmGFP7X6C_-9QmQtw
+    function getLatLng(){
+    	var latitude = 0;
+    	var longitude = 0;
+    	
+    	var address = "";
+    	
+    	// Using current location, so use already computed lat and long and skip call to geo api
+    	if(document.getElementById('radio1').checked == true){
+    		latitude = lat;
+    		longitude = lng;
+    	}
+    	
+    	else{
+			address = document.getElementById("form").location2.value;
+			
+			// Dynamically create URL to find lat and long from inputted address 
+	    	$.ajax({
+	            type: "GET",
+	            url: "https://maps.googleapis.com/maps/api/geocode/json?address=" + address + "&key=AIzaSyBUVIzR6tIwztkSldSmGFP7X6C_-9QmQtw", 
+	            async: false,
+	            success: function( result ) {
+	            	console.log(result.results[0].geometry.location.lat)
+	            	latitude = (result.results[0].geometry.location.lat);
+	            	longitude = (result.results[0].geometry.location.lng);
+	            	console.log(latitude, longitude);
+				 }
+	        });
+    	}    	
+    	
+    	console.log(latitude, longitude);
+    	var coords = [latitude, longitude];
+    	return coords;
+    }
+    
+    // Get IP address here and pass to backend
+    	
+    function retrieveData(){
+           // Send coords, radius, segmentID (type of event), and keyword
+        
+            var radius = document.getElementById('form').distance.value;
+           	var select = document.getElementById("category");
+           	var event = select.options[select.selectedIndex].text;
+           	
+           	
+           	var keyword = document.getElementById('form').keyword.value;
+           	
+           	
+           	var coords = getLatLng();
+           	console.log(coords);
+			
+           	// Create JSON to send to flask here
+           
+           	var dict = {
+                	radius: radius,
+                	event:  event,
+                	keyword:  keyword,
+                	lat: coords[0],
+                	lng:  coords[1] 
+                }
+           	
+            $.ajax({
+                type: "POST",
+                url: "/JSONTest", //localhost Flask
+            	
+                /*
+                data: {
+                	radius: radius,
+                	event: event,
+                	keyword: keyword,
+                	coords: coords
+                },	
+            	*/
+            	data: JSON.stringify(dict),
+                contentType: "application/json",
+                
+                success: function( result ) {
+    				
+               		displayData(result)
+    			}
+            });
+        }
+    	
+    	var eventIDs = [];
+    	function displayData(result){    
+        	// No results, so display that to user
+        	clearMoreInfo();
+        	console.log(result)
+        	if(result.page.totalElements == 0){
+        		setEmptyResults()
+        		return;
+        	}
+        	
+        	else{
+        		// Clear empty results box and move upwards
+        		clearEmptyResults()
+				
+        		var events = result._embedded.events;
+				console.log(events)
+        		console.log("size of array is: " + events.length)
+        		// Now create table
+        		
+        		// Date , Icon, Event, Genre, Venue
+        		
+        		// Date is “localDate” and “localTime”
+        		// attributes that is part of “events” object
+        		
+        		// Icon is “images” attribute that is part
+        		// of the “events” object.
+        		
+        		// Event is "name" attribute
+        		
+        		// Genre is "segment" attribute
+        		
+        		// Venue is “name” attribute that is part of
+        		// the “venue” object inside “events” object.
+        		
+        		
+        		// Loop through all events, 
+        		var html = ("<table id = \"eventtable\">");
+				
+				
+				html += ("<tr>");
+				html += ("<th>Date</th><th>Icon</th><th>Event</th><th>Genre</th><th>Venue</th>");
+				html += ("</tr>");
+				
+				// Clear array of eventID's as this is a new search
+				eventIDs = []
+        		for(var i = 0; i < events.length; i++){
+        			var date = events[i].dates.start.localDate
+        			if(date === undefined){
+        				date = "Date N/A"
+        			}
+        			var time = events[i].dates.start.localTime
+        			console.log(time)
+        			if(time === undefined){
+        				time = "Time N/A"
+        			}
+					
+        			var eventName = events[i].name
+        			if(eventName === undefined){
+        				continue;
+        			}
+        			var segmentName = events[i].classifications[0].segment.name
+        			if(segmentName === undefined){
+        				segmentName = "Genre N/A"
+        			}
+        			var venueName = events[i]._embedded.venues[0].name
+        			if(venueName === undefined){
+        				venueName = "Venue N/A"
+        			}
+        			
+        			var image = events[i].images[0].url
+        			
+        			var eventID = events[i].id;
+        			eventIDs.push(eventID);
+    				html +=("<tr>");
+    				html +=("<td class = \"daterow\">" + date + "<br>" + time + "</td>" + 
+    						"<td class = \"imagerow\"> <img src=\"" + image + "\"></td>" + 
+    					 	"<td class = \"eventrow\">" + eventName  + "</td>" +
+    					 	"<td class = \"segmentrow\">" + segmentName + "</td>" +
+    					 	"<td class = \"venuerow\">" + venueName  + "</td>")
+    				html +=("</tr>");
+        		}
+        		
+        		
+        		// Now set html of element
+        		document.getElementById('resulttable').innerHTML = html;
+        		var table = document.getElementById('eventtable');
+        		console.log("table has this num of rows: " + table.rows.length);
+        		
+        		// For the third td element in each row in table, create onclick event that is 
+        		// getMoreInfo(eventIDs[i]])
+        		for(let i = 1; i < table.rows.length; i++){
+        			var row = table.rows[i];
+        			var children = row.children;
+        			var eventColumn = children.item(2);
+        			console.log(eventColumn);
+        			
+        			eventColumn.onclick = function() {
+        				getMoreInfo(eventIDs[i-1])
+        		    }
+        		}
+        	}
+    	}
+    	
+    	function getMoreInfo(eventID){
+    		console.log(eventID)
+    		// Send eventID to python for next call, return will be JSON needed to display data
+    		var dict = {
+                 // eventID: eventID
+					eventID: eventID    		
+    		}
+    		console.log("passing event with ID of " + eventID + " to backend");
+    		$.ajax({
+                type: "POST",
+                url: "/getEventInfo", //localhost Flask
+            	
+            	data: JSON.stringify(dict),
+                contentType: "application/json",
+                
+                success: function( result ) {
+					console.log(result); 
+					
+					var name = result.name
+					var date = result.dates.start.localDate;
+					var time = result.dates.start.localTime;
+					
+					// Check if one or two attractions
+					var attractions = [];
+					if(result._embedded.attractions.length == 1){
+						attractions.push(result._embedded.attractions[0].name)
+					}
+					// 2 attractions
+					else{
+						attractions.push(result._embedded.attractions[0].name)
+						attractions.push(result._embedded.attractions[1].name)
+					}
+					
+					var attractionLinks = []
+					
+					for(var i = 0; i < result._embedded.attractions.length; i++){
+						attractionLinks.push(result._embedded.attractions[i].url)
+					}
+					
+					
+					console.log(attractions);
+					
+					var venue = result._embedded.venues[0].name
+					
+					var genres = [];
+					
+					// Check genre, segment, and subGenre and add to genres 
+					var sc = result.classifications[0];
+					if(sc.genre != undefined){
+						if(sc.genre.name != "Undefined"){
+							genres.push(sc.genre.name);
+						}
+					}
+					if(sc.segment != undefined){
+						if(sc.segment.name != "Undefined"){
+							genres.push(sc.segment.name);
+						}
+					}
+					if(sc.subGenre != undefined){
+						if(sc.subGenre.name != "Undefined"){
+							genres.push(sc.subGenre.name);
+						}
+					}
+					if(sc.subType != undefined){
+						if(sc.subType.name != "Undefined"){
+							genres.push(sc.subType.name);
+						}
+					}
+					if(sc.type != undefined){
+						if(sc.type.name != "Undefined"){
+							genres.push(sc.type.name);
+						}
+					}
+					var genres = genres.join(" | ");
+					console.log(genres);
+					
+					
+					// This one is rare to have
+					var priceRanges = undefined;
+					var min = undefined;
+					var max = undefined;
+					
+					if(result.priceRanges != undefined){
+						min = result.priceRanges[0].min;
+						max = result.priceRanges[0].max;
+						priceRanges = min + " - " + max + " USD";
+    				}
+    				
+					var ticketStatus = result.dates.status.code;
+					
+					var linkToTicket = result.url;
+					
+					var seatMap = result.seatmap.staticUrl;
+					
+					composeHTML(name, date, time, attractions, venue, genres, priceRanges, ticketStatus,
+							linkToTicket, seatMap, attractionLinks)
+                }
+            });
+    		
+    		window.location.href = "#moreinfo";
+    		
+    	}
+    	
+    	function composeHTML(name, date, time, attractions, venue, genres, priceRanges, ticketStatus,
+							linkToTicket, seatMap, attractionLinks)
+    	{
+    		var html = "";
+   			
+    		if(ticketStatus == "onsale"){
+    			ticketStatus = "Onsale"
+    		}
+    		if(ticketStatus == "offsale"){
+    			ticketStatus = "Offsale"
+    		}
+    		// header
+    		html += ("<h1 id = \"nameheader\">" + name + "</h1>");
+    		
+    		// Date and time
+    		html += ("<div id = \"colContainer\">")
+    		html += ("<div id = \"leftCol\">")
+    		html += ("<p class = \"fieldheader\"> Date </p>");
+    		html += ("<p class = \"fieldbody\">" +  date + " " + time + "</p>");
+    		// Artist/Team Names
+    		if(attractions != undefined){
+    		// Need it to link to the ticketmaster site for each
+	    		html += ("<p class = \"fieldheader\"> Artist/Team </p>");
+    			if(attractions.length == 1){
+    				html += ("<p class = \"fieldbody\" id = \"singleTeamLink\">" +  attractions[0] + "</p>");
+    				
+    			}
+    			else{
+    				html += ("<span><p class = \"fieldbody\" id = \"firstTeamLink\">" +  attractions[0] + "</p>");
+    				html += ("<p class = \"fieldbody\" id = \"secondTeamLink\">" +  attractions[1] + "</p></span>")
+    			
+    			}
+
+    		}
+    		
+    		
+    		
+    		// Venue
+    		html += ("<p class = \"fieldheader\"> Venue </p>");
+    		html += ("<p class = \"fieldbody\">" +  venue + "</p>");
+    		// Genres
+    		html += ("<p class = \"fieldheader\"> Genres </p>");
+    		html += ("<p class = \"fieldbody\">" +  genres + "</p>");
+    		// PriceRanges
+    		if(priceRanges != undefined){
+    			html += ("<p class = \"fieldheader\"> Price Ranges </p>");
+        		html += ("<p class = \"fieldbody\">" +  priceRanges + "</p>");
+    		}
+    		// Ticket Status
+    		if(ticketStatus != undefined){
+    			html += ("<p class = \"fieldheader\"> Ticket Status </p>");
+        		html += ("<p class = \"fieldbody\">" +  ticketStatus + "</p>");
+    		}
+    		
+    		// Ticket Link, need javascript to update link
+    		html += ("<p class = \"fieldheader\"> Buy Ticket At: </p>");
+    		html += ("<p class = \"fieldbody\" id = \"ticketMasterLink\">Ticketmaster</p>");
+    		html += ("</div>")
+    		html += ("<div id = \"rightCol\">")
+    		html += ("<img id = \"seatMapImg\">");
+    		html += ("</div>")
+    		html += ("</div>")
+    		console.log(html);
+    		document.getElementById('moreinfo').innerHTML = html;
+    		
+    		// Sets link of seatMap element
+    		if(seatMap == undefined){
+    			// Set all text in box to be centered
+    			document.getElementById("moreinfo").style.textAlign = "center"
+    		}
+    		else{
+    			document.getElementById("seatMapImg").src = seatMap
+    		}
+    		var link = document.getElementById("ticketMasterLink")
+    		console.log(link);
+    		link.onclick = function(){
+    			window.open(linkToTicket, '_blank')
+    		}
+    		
+    		if(attractions.length == 1){
+    			console.log(document.getElementById('singleTeamLink'))
+				document.getElementById('singleTeamLink').onclick = function(){
+	    			window.open(attractionLinks[0], '_blank')
+	    		}
+    		}
+    		else{
+    			document.getElementById('firstTeamLink').onclick = function(){
+	    			window.open(attractionLinks[0], '_blank')
+	    		}
+				document.getElementById('secondTeamLink').onclick = function(){
+	    			window.open(attractionLinks[1], '_blank')
+	    		}
+    		}
+    	}
+    	
+    	// Dynamically change the result object to match 0 results
+    	function setEmptyResults(){
+    		clearTable()
+    		clearMoreInfo()
+    		document.getElementById('noresults').style.border = "2px solid gray";
+    		var html = "<h1 id >No records have been found</h1>";
+    		document.getElementById('noresults').innerHTML = html
+    	}
+    	
+    	function clearTable(){
+    		document.getElementById('resulttable').innerHTML = ""
+    	}
+    	function clearMoreInfo(){
+    		document.getElementById('moreinfo').innerHTML = ""
+    	}
+        
+    	// Get rid of div section for empty results
+    	function clearEmptyResults(){
+    		var e = document.getElementById('noresults')
+    		e.style.border = null;
+    		e.style.marginTop = null;
+    		document.getElementById('noresults').innerHTML = ""
+    	}
+        
+        function makeRequired(){
+        	if(document.getElementById('radiobutton').checked){
+        		document.getElementById('locationInput').disabled = false;
+        		document.getElementById('locationInput').required = true;
+        	}
+        	else{
+        		document.getElementById('locationInput').required = false;
+        		document.getElementById('locationInput').disabled = true;
+        	}
+        }
+    </script>
+    
+    <style>
+    
+    
+    	#form{
+    		margin-top:20px;
+    		width:60%;
+    		position: relative;
+    		left:20%;
+    		background-color: #E8E8E8;
+    		font-size: 18px;
+    	}
+    	#header{
+    		text-align: center;
+    		margin-top: 0;
+    		line-height: 0.9;
+    		font-size: 40px;
+    		border-bottom: 2px solid #D8D8D8;
+    	}
+    	#radiobutton{
+    		position: relative;
+    		left: 338.75px;
+    	}
+    	#locationInput{
+    		position: relative;
+    		left: 336px;
+    	}
+    	
+    	#noresults{
+    		margin-top: 30px;
+   			position: relative;
+   			width: 70%;
+   			left: 15%;
+   			text-align: center;
+   			background-color: #E8E8E8;
+   			font-size: 18px;
+    	}
+    	
+    	#resulttable{
+    		margin-top: 30px;
+   			margin-bottom: 80px;
+    	}
+    	
+    	#eventtable{
+    		font-size: 18px;
+    		text-align: center;
+    		position: relative;
+   			width: 90%;
+   			left: 5%;
+   			border: 1px solid black;
+   		    border-collapse: collapse;
+    	}
+    	
+    	
+	    th,
+	    td {
+	       border: 1px solid black;
+   		   border-collapse: collapse;
+   		   height: 100px;
+	    }
+	    
+	    td.daterow{
+	    	width: 10%;
+	    
+	    }
+	    
+	    td.imagerow{
+	    	width: 10%;
+	    
+	    }
+	    td.eventrow{
+	    	width: 40%; 
+	    }
+	    td.eventrow:hover{
+	    	cursor:pointer;
+	    	color: gray;
+	    }
+	    
+	    td.segmentrow{
+	    	width: 15%;
+	    
+	    }
+	    td.venuerow{
+	    	width: 25%;
+	    
+	    }
+	    img{
+	    	width: 90%;
+	    	height: 90%;
+	    }
+    	
+    	#moreinfo{
+    		margin-bottom: 80px;
+    	}
+    	#nameheader{
+    		text-align: center;
+    		font-size: 45px;
+    	}
+    	
+    	#ticketMasterLink:hover{
+    		cursor:pointer;
+	    	color: gray;
+    	}
+    	
+    	#singleTeamLink:hover{
+    		cursor:pointer;
+	    	color: gray;
+    	}
+    	#firstTeamLink:hover{
+    		cursor:pointer;
+	    	color: gray;
+    	}
+    	
+    	#secondTeamLink:hover{
+    		cursor:pointer;
+	    	color: gray;
+    	}
+    	.fieldheader{
+    		font-size: 30px;
+    		text-align: left;
+    		line-height: 0.8;
+    		width: 100%;
+    		
+    	}
+    	.fieldbody{
+    		font-size: 20px;
+    		text-align: left;
+    		line-height: 0.8;
+    		color: #404040;
+    		width: 100%
+    	}
+    	#seatMapImg{
+    		width: 110%;
+    		height: 100%;
+    		position:relative;
+    		left: -20px;
+    	}
+    	
+    	#colContainer{
+    		width: 80%;
+    		position: relative;
+    		left: 10%;
+    		display: flex;
+    	}
+    	#leftCol{
+    		width: 100%;
+    		position: relative;
+    	}
+    	
+    	#rightCol{
+    		width: 100%
+    	}
+    	
+    	
+    </style>
+</head>
+
+<body onload = "getLocation()">
+
+
+<form name="myform" id = "form" onsubmit = "retrieveData();return false">
+  
+  <fieldset>
+  <h1 id = "header"><i>Events Search</i></h1>
+  	
+  	<b>Keyword</b> <input type="text" id="keyword" name="keyword" REQUIRED><br><br>
+  	
+  	<b>Category</b>
+  	<select name="category" id="category">
+  		<option value="default">Default</option>
+	    <option value="music">Music</option>
+	    <option value="sports">Sports</option>
+	    <option value="arts&theatre">Arts & Theatre</option>
+	    <option value="film">Film</option>
+	    <option value="miscellaneous">Miscellaneous</option>
+	    
+  	</select><br><br>
+  	
+  	<b>Distance (miles) </b><input type="text" id="distance" name="distance" REQUIRED placeholder = "10"
+  		value = "10">
+  	<b> from</b>
+  	
+  	<input id = "radio1" type = "radio" name = "location" onclick="makeRequired()" Checked>Here
+  	<br>
+  	<input id = "radiobutton" type = "radio" name = "location" onclick = "makeRequired()">
+  	</input>
+  	<input id = "locationInput" placeholder="Location" name = "location2" Disabled></input>
+  	<br><br>
+  	
+  	<input id = "submit" type="submit" value="Submit" Disabled>
+  	<input type="reset" value="Clear">
+  	
+  	
+  </fieldset>
+</form>
+
+<div id = noresults>
+</div>
+<div id = resulttable>
+</div>
+<div id = moreinfo>
+</div>
+
+</body>
+</html>
