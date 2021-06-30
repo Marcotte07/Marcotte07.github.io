@@ -1,0 +1,53 @@
+.redStar{
+    color: red;
+}
+
+#header{
+    margin-top: 30px;
+    text-align: center;
+    font-size: 36px;
+    margin-bottom: 30px;
+}
+
+label{
+    font-size: 18px;
+}
+
+#from{
+    font-size: 18px;
+    display: inline;
+}
+#fromStar{
+    display: inline;
+    color: red;
+}
+
+.custom-control-label{
+    font-size: 16px;
+}
+
+#submitBtn{
+    margin-right: 10px;
+}
+
+#results{
+    background-color: blue;
+}
+
+#favorites{
+    background-color: red;
+}
+
+.md-tab.md-active{
+    background-color: blue;
+}
+
+.progress{
+    margin-top: 40px;
+    width:75%;
+    position: relative;
+    left: 12.5%;
+}
+#bar{
+    align-items: center;
+}

@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">Event Search</string>
+    <string name="tab_text_1">Search</string>
+    <string name="tab_text_2">Favorites</string>
+    <string name="event_tab_1">Event Info</string>
+    <string name="event_tab_2">Artist(s)</string>
+    <string name = "event_tab_3">Venue</string>
+    <string name="title_activity_results">ResultsActivity</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="title_activity_event">EventActivity</string>
+</resources>

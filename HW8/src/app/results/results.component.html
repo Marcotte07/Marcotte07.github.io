@@ -1,0 +1,75 @@
+
+<div class= "container-fluid" id = "container">
+    <mat-tab-group mat-align-tabs="center" id = "tabGroup" #tabGroup (selectedTabChange)="tabChanged($event)">
+        <mat-tab label="Results" id = "results">
+            <div id = "noResults"></div>
+            <div id = "test">
+            <div *ngIf="localJsonObject">
+                <table class = "table table-striped" id = "resultsTable">
+                    <tr id = "row">
+                        <th>#</th>
+                        <th>Date</th>
+                        <th>Event</th>
+                        <th>Category</th>
+                        <th>Venue Info</th>
+                        <th>Favorite</th>
+                    </tr>
+                    <tr *ngFor="let event of eventsArray; index as i">
+                        <th>{{i+1}}</th>
+                        <th>{{event.dates.start.localDate}}</th>
+                        <th class = "eventClick" (click) = "goToEventURL(event)" matTooltip = {{event.name}} >{{event.name}}</th>
+                        <th>{{categoryArray[i]}}</th>
+                        <th>{{event._embedded.venues[0].name}}</th>
+                        <th>
+                            <p (click)="favoriteButton(event, categoryArray[i], $event.target)" style="font-size: 25px;
+                            text-align:center;"><b>&#9734;</b>
+                            </p>
+                        </th>
+                    </tr>
+                </table>
+                
+            </div>
+            </div>
+
+
+        </mat-tab>
+
+
+
+
+
+
+
+        <mat-tab label="Favorites" id = "favorites">
+        <div id = "noFavorites"></div>
+        <div id = "favoritesTable">
+            <table class = "table table-striped">
+                <tr id = "row2">
+                    <th>#</th>
+                    <th>Date</th>
+                    <th>Event</th>
+                    <th>Category</th>
+                    <th>Venue Info</th>
+                    <th>Favorite</th>
+                </tr>
+                <tr *ngFor="let favorite of favoritesArray; index as i">
+                    <th>{{i+1}}</th>
+                    <th>{{favorite.dates.start.localDate}}</th>
+                    <th class = "eventClick" (click) = "goToEventURL(favorite)" matTooltip = {{favorite.name}} >{{favorite.name}}</th>
+                    <th></th>
+                    <th>{{favorite._embedded.venues[0].name}}</th>
+                    <th>
+                        <svg (click) = "removeFavoriteButton(favorite, $event.target, i)" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+                            <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
+                        </svg>
+                    </th>
+                </tr>
+            </table>
+        </div>
+        </mat-tab>
+    
+    </mat-tab-group>
+
+
+</div>
+

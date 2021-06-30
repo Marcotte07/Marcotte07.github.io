@@ -1,0 +1,28 @@
+.mat-tab-label.mat-tab-label-active{
+    background-color: blue;
+    color: white;
+}
+
+.mat-tab-label {
+    background-color: transparent;
+    color: blue;
+}
+
+#tabGroup{
+    margin-bottom: 200px;
+}
+
+#resultsTable{
+    margin-top: 20px;
+}
+
+#container{
+    margin-top: 50px;
+}
+
+.eventClick:hover{
+    cursor: pointer;
+}
+.eventClick{
+    color: blue
+}

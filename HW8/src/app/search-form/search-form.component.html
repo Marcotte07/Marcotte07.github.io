@@ -1,0 +1,93 @@
+<form [formGroup]="userForm" (ngSubmit)="onSubmit()" class = "needs-validation">
+   
+    <h1 id = "header">Entertainment Event Search</h1>
+
+    <div class="form-row justify-content-center">
+        <div class="col-md-8 mb-4">
+                <label for= "keyword"><b>Keyword</b></label><label for="keyword" class ="redStar">*</label>
+                <input type="text" id="keyword" name="keyword" class = "form-control" 
+                placeholder = "Enter Artist, Team, or Event Name"
+                (focusout)="checkEmptyKeyword()"
+                (ngModelChange)="inputChanged()"
+                [formControl]="keywordControl"
+                matInput
+                [matAutocomplete]="auto">
+                
+                <mat-autocomplete #auto="matAutocomplete">
+                    <mat-option *ngFor="let option of filteredOptions" [value]="option">
+                      {{option}}
+                    </mat-option>
+                  </mat-autocomplete>
+        <div id = "keywordErrorMSG"></div>
+            
+        </div>
+        
+    </div>
+      <div class="form-row justify-content-center">
+        <div class="col-md-8 mb-4">
+            <label for="category"><b>Category</b></label>
+              <select class="custom-select" id ="category">
+                <option value="default">All</option>
+                <option value="music">Music</option>
+                <option value="sports">Sports</option>
+                <option value="arts&theatre">Arts & Theatre</option>
+                <option value="film">Film</option>
+                <option value="miscellaneous">Miscellaneous</option>
+              </select>
+        </div>
+       </div>
+
+       <div class="form-row justify-content-center">
+       <div class="col-md-4 mb-4">
+        <label for= "distance"><b>Distance</b></label>
+        <input type="text" id="distance" name="distance" class = "form-control" placeholder = "10">
+       </div>
+       <div class = "col-md-4 mb-4">
+        <label for= "distanceUnits"><b>Units</b></label>
+        <select class="custom-select" id ="distanceUnits">
+            <option value="miles">Miles</option>
+            <option value="kilometers">Kilometers</option>
+          </select>
+       </div>
+       </div>
+
+       <div class="form-row justify-content-center">
+        <div class="col-md-4 mb-4">
+            <p id = "from"><b>From</b></p>
+            <div class="custom-control custom-radio">
+                <input type="radio" id="radio1" name="radio" class="custom-control-input" checked (click)= "changeDisabled()">
+                <label class="custom-control-label" for="radio1">Current Location</label>
+            </div>
+            <div class="custom-control custom-radio">
+                <input type="radio" id="radio2" name="radio" class="custom-control-input" (click)= "changeDisabled()">
+                <label class="custom-control-label" for="radio2">Other Location: Please Specify:</label>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <label for= "location"><b>Other Location</b></label><label for="keyword" class ="redStar">*</label>
+            <input type="text" id="location" name="location" class = "form-control" 
+            (focusout)="checkEmptyLocation()"
+            [formControl]="locationControl"
+            (ngModelChange)="locationInputChanged()"
+            placeholder = "Location" 
+            [disabled]="true">
+            <div id = "distanceErrorMSG"></div>
+        </div>
+       </div>
+
+    <div class="form-row justify-content-center">
+      <div class="col-md-4 mb-4">
+        <button class="btn btn-primary btn-lg" id = "submitBtn" type="submit" matTooltip= "Submit To See Results" disabled>Search</button>
+         
+        <button class="btn btn-secondary btn-lg" (click)="clearResults()" type="reset" matTooltip="Clear All Fields and Results" >Clear</button>
+      </div>
+      <div class="col-md-4 mb-4"></div>
+    </div>
+</form>	
+
+<div id = "bar" style="display:none;">
+<div class="progress">
+    <div id = "changeProgress" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+</div>
+</div>
